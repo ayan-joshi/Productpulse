@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ProductPulse
 
-## Getting Started
+**AI research agent that mines Reddit and Hacker News for real user pain points — results in ~90 seconds.**
 
-First, run the development server:
+🔗 **Live:** https://productpulse-60fo.onrender.com
+
+---
+
+## What it does
+
+You type a niche. ProductPulse autonomously:
+
+1. Identifies the most relevant subreddits
+2. Runs targeted frustration-focused searches across Reddit + Hacker News
+3. Deep-reads the highest-signal posts and comments
+4. Returns a structured report with ranked pain points, unmet needs, recurring questions, and product opportunities
+
+No surveys. No Google Trends. Real people, real complaints.
+
+---
+
+## Demo
+
+Visit [`/research`](https://productpulse-60fo.onrender.com/research) and type any niche — e.g. `standing desk ergonomics`, `B2B sales automation`, `Indian baby products`.
+
+You can also share a pre-run link:
+```
+https://productpulse-60fo.onrender.com/research?niche=solopreneur+productivity
+```
+The agent auto-runs on load.
+
+---
+
+## Tech Stack
+
+| Layer | Tech |
+|---|---|
+| Framework | Next.js 16 (App Router) + TypeScript |
+| Styling | Tailwind CSS v4 |
+| AI / Agent | Groq API — Llama 3.3 70B with tool use |
+| Data sources | Reddit JSON API + HN Algolia API |
+| Streaming | Server-Sent Events (SSE) |
+| Deployment | Render |
+
+---
+
+## Features
+
+- **Agentic pipeline** — multi-step tool use (suggest subreddits → search → deep-read → synthesize)
+- **Live activity log** — watch the agent work in real time
+- **Structured report** — pain points with frequency + verbatim quotes, unmet needs, recurring questions, product opportunities, top sources
+- **Shareable links** — `/research?niche=X` auto-runs the agent
+- **Export** — download report as JSON or copy as Markdown
+- **Search history** — last 5 niches saved locally
+- **Example report** — pre-loaded demo on first visit so the page is never blank
+
+---
+
+## Local Setup
+
+### 1. Clone and install
+
+```bash
+git clone https://github.com/ayan-joshi/Productpulse.git
+cd Productpulse
+npm install
+```
+
+### 2. Add environment variables
+
+Create `.env.local` in the project root:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+Get a free API key at [console.groq.com](https://console.groq.com).
+
+### 3. Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+src/
+├── app/
+│   ├── page.tsx                  # Landing page
+│   ├── research/
+│   │   ├── page.tsx              # Suspense wrapper
+│   │   ├── ResearchClient.tsx    # Research workspace (client)
+│   │   └── layout.tsx            # Route metadata
+│   └── api/research/route.ts     # SSE streaming endpoint
+├── components/
+│   ├── research/
+│   │   ├── ResearchForm.tsx      # Niche input + history
+│   │   ├── ActivityLog.tsx       # Live agent log
+│   │   └── ReportDisplay.tsx     # Report with export buttons
+│   ├── ReportPreview.tsx         # Landing page output preview
+│   └── Logo.tsx                  # SVG logo component
+└── lib/
+    ├── agent.ts                  # Groq agent orchestrator
+    ├── reddit.ts                 # Reddit search + post fetcher
+    ├── hn.ts                     # HN Algolia search
+    └── exampleReport.ts          # Static demo report data
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How the Agent Works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+User input (niche)
+      ↓
+suggest_subreddits → finds 4-5 real communities
+      ↓
+search_reddit (5-6 targeted queries with frustration keywords)
+search_hn (1 query for technical/founder angle)
+      ↓
+deep_read_posts → fetches full content + top comments for 8-10 best posts
+      ↓
+synthesizeReport → Groq extracts structured JSON report
+      ↓
+Streamed to frontend via SSE
+```
 
-## Deploy on Vercel
+Agent uses a stop-early strategy — halts as soon as 8+ high-signal posts are read, keeping runs under 90 seconds.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Environment Variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `GROQ_API_KEY` | Yes | From [console.groq.com](https://console.groq.com) — free tier available |
+
+---
+
+## Built by
+
+[Ayan Joshi](https://github.com/ayan-joshi)
