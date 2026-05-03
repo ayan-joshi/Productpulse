@@ -122,21 +122,22 @@ async function executeTool(
     const subreddit = args.subreddit as string | undefined;
     const label = subreddit ? `r/${subreddit}` : "Reddit (global)";
     progressCb(`Searching ${label} — "${query}"`);
-    const results = await searchReddit(query, subreddit, 15);
+    const results = await searchReddit(query, subreddit, 8);
     progressCb(`  → ${results.length} posts found`);
-    return results;
+    // Return compact form for messages — title + permalink + score only
+    return results.map((r) => ({ title: r.title, permalink: r.permalink, score: r.score, num_comments: r.num_comments }));
   }
 
   if (name === "search_hn") {
     const query = args.query as string;
     progressCb(`Searching HN — "${query}"`);
-    const results = await searchHN(query, 10);
+    const results = await searchHN(query, 8);
     progressCb(`  → ${results.length} HN posts found`);
-    return results;
+    return results.map((r) => ({ title: r.title, url: r.url, score: r.score }));
   }
 
   if (name === "deep_read_posts") {
-    const permalinks = ((args.permalinks as string[]) ?? []).slice(0, 10);
+    const permalinks = ((args.permalinks as string[]) ?? []).slice(0, 8);
     progressCb(`Deep-reading ${permalinks.length} posts + comments...`);
     const posts: RedditPostWithComments[] = [];
     for (const pl of permalinks) {
@@ -144,7 +145,15 @@ async function executeTool(
       if (post) posts.push(post);
     }
     progressCb(`  → ${posts.length} posts read successfully`);
-    return posts;
+    // Return compact summary for messages; full posts returned separately via __fullPosts
+    const compact = posts.map((p) => ({
+      title: p.title,
+      body: p.selftext.slice(0, 150),
+      score: p.score,
+      top_comment: p.comments[0]?.body.slice(0, 100) ?? "",
+      permalink: p.permalink,
+    }));
+    return { compact, __fullPosts: posts };
   }
 
   return {};
@@ -193,7 +202,7 @@ export async function runAgent(
       messages: messages,
       tools: TOOLS,
       tool_choice: "auto",
-      max_tokens: 2000,
+      max_tokens: 800,
       temperature: 0.3,
     });
 
@@ -221,12 +230,17 @@ export async function runAgent(
         progressCb(`  ⚠ Skipped (${errMsg})`);
         result = [];
       }
-      if (Array.isArray(result)) allPosts.push(...result);
-      messages.push({
-        role: "tool",
-        tool_call_id: tc.id,
-        content: JSON.stringify(result),
-      });
+      // deep_read_posts returns { compact, __fullPosts } — send compact to messages, full to allPosts
+      type DeepReadResult = { compact: unknown[]; __fullPosts: unknown[] };
+      const isDeepRead = result && typeof result === "object" && !Array.isArray(result) && "__fullPosts" in (result as object);
+      if (isDeepRead) {
+        const dr = result as DeepReadResult;
+        allPosts.push(...dr.__fullPosts);
+        messages.push({ role: "tool", tool_call_id: tc.id, content: JSON.stringify(dr.compact) });
+      } else {
+        if (Array.isArray(result)) allPosts.push(...result);
+        messages.push({ role: "tool", tool_call_id: tc.id, content: JSON.stringify(result) });
+      }
     }
   }
 
