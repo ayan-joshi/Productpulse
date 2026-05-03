@@ -8,14 +8,6 @@ interface Props {
   onRun: (niche: string) => void;
 }
 
-const exampleNiches = [
-  "solopreneur productivity tools",
-  "standing desk ergonomics",
-  "Indian baby products",
-  "B2B sales automation",
-  "AI writing assistants",
-];
-
 export default function ResearchForm({
   niche,
   running,
@@ -93,34 +85,6 @@ export default function ResearchForm({
           </div>
         </div>
       )}
-
-      <div>
-        <p className="text-xs text-slate-500 mb-2">Try one of these:</p>
-        <div className="flex flex-wrap gap-2">
-          {exampleNiches.map((n) => (
-            <button
-              key={n}
-              onClick={() => onNicheChange(n)}
-              className="text-xs px-3 py-1 rounded-full border transition-all cursor-pointer"
-              style={{
-                borderColor: "var(--border)",
-                color: "var(--text-muted)",
-                background: "transparent",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(99,102,241,0.4)";
-                e.currentTarget.style.color = "var(--text-secondary)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.color = "var(--text-muted)";
-              }}
-            >
-              {n}
-            </button>
-          ))}
-        </div>
-      </div>
 
       <button
         onClick={() => onRun(niche)}

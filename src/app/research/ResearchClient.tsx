@@ -6,6 +6,7 @@ import Navbar from "@/components/research/Navbar";
 import ResearchForm from "@/components/research/ResearchForm";
 import ActivityLog from "@/components/research/ActivityLog";
 import ReportDisplay from "@/components/research/ReportDisplay";
+import TrendingNiches from "@/components/research/TrendingNiches";
 import type { ResearchReport } from "@/lib/agent";
 import { EXAMPLE_REPORT, EXAMPLE_NICHE } from "@/lib/exampleReport";
 
@@ -126,20 +127,37 @@ export default function ResearchClient() {
               onNicheChange={setNiche}
               onRun={handleRun}
             />
+            {logs.length === 0 && !running && (
+              <TrendingNiches onNicheChange={setNiche} onRun={handleRun} />
+            )}
             {logs.length > 0 && <ActivityLog logs={logs} />}
           </div>
 
           <div className="min-w-0">
             {error && (
               <div
-                className="rounded-xl p-4 border text-sm mb-4"
+                className="rounded-xl p-4 border text-sm mb-4 space-y-3"
                 style={{
                   background: "rgba(239,68,68,0.08)",
                   borderColor: "rgba(239,68,68,0.3)",
                   color: "#fca5a5",
                 }}
               >
-                {error}
+                <p>{error}</p>
+                {niche.trim() && (
+                  <button
+                    onClick={() => handleRun(niche)}
+                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-all cursor-pointer"
+                    style={{ borderColor: "rgba(239,68,68,0.4)", color: "#fca5a5", background: "rgba(239,68,68,0.1)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(239,68,68,0.18)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(239,68,68,0.1)"; }}
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Run Again
+                  </button>
+                )}
               </div>
             )}
 

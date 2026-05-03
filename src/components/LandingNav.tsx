@@ -37,10 +37,10 @@ export default function LandingNav() {
           </a>
           <Link
             href="/research"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-200"
+            className="btn-lift inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white"
             style={{
               background: "linear-gradient(135deg, #6366f1, #7c3aed)",
-              boxShadow: "0 0 20px rgba(99,102,241,0.2)",
+              boxShadow: "0 0 20px rgba(99,102,241,0.25)",
             }}
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

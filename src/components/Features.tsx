@@ -63,8 +63,22 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="py-24 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-24 px-6 relative overflow-hidden">
+      {/* Section orb */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          width: "500px",
+          height: "500px",
+          top: "50%",
+          right: "-200px",
+          transform: "translateY(-50%)",
+          background: "radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)",
+          filter: "blur(80px)",
+        }}
+      />
+
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-16">
           <p className="text-indigo-400 font-medium text-sm mb-3 uppercase tracking-widest">
             Why ProductPulse
@@ -84,12 +98,19 @@ export default function Features() {
           {features.map((f, i) => (
             <div
               key={i}
-              className="glow-border rounded-2xl p-6"
-              style={{ background: "var(--bg-card)" }}
+              className="card-lift rounded-2xl p-6 border"
+              style={{
+                background: "var(--bg-card)",
+                borderColor: "rgba(99,102,241,0.12)",
+              }}
             >
               <div
                 className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-                style={{ background: "rgba(99,102,241,0.1)", color: "#818cf8" }}
+                style={{
+                  background: "linear-gradient(135deg, rgba(99,102,241,0.2) 0%, rgba(168,85,247,0.15) 100%)",
+                  color: "#a5b4fc",
+                  boxShadow: "0 0 20px rgba(99,102,241,0.12)",
+                }}
               >
                 {f.icon}
               </div>

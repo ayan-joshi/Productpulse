@@ -97,6 +97,34 @@
   box-shadow: 0 0 24px rgba(99, 102, 241, 0.08);
 }
 
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-6px);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5), 0 0 32px rgba(99, 102, 241, 0.12);
+}
+
+.btn-lift {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn-lift:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 16px 40px rgba(99, 102, 241, 0.45) !important;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 40px rgba(99,102,241,0.2), inset 0 1px 0 rgba(255,255,255,0.05); }
+  50% { box-shadow: 0 0 70px rgba(99,102,241,0.35), 0 0 100px rgba(168,85,247,0.15), inset 0 1px 0 rgba(255,255,255,0.05); }
+}
+
+.glow-pulse {
+  animation: glow-pulse 3.5s ease-in-out infinite;
+}
+
 .gradient-text {
   background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
   -webkit-background-clip: text;
